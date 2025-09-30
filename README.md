@@ -13,8 +13,8 @@ docker-compose up -d --force-recreate p2-pgdb p2-mongodb
 docker-compose up -d --force-recreate p2-keycloak
 ```
 
-* Login with admin credentials, change to realm `librechat` and create any user.
-* Goto `Clinets -> librechat-client -> Creadentials` and recreate the `Client Secret`
+* Login with admin credentials
+* Goto `Clinets -> librechat-client -> Credentials` and recreate the `Client Secret`
 * Insert this `Client Secret` into `.env` for `OPENID_CLIENT_SECRET`
 
 ```
@@ -34,7 +34,7 @@ OPENID_CLIENT_SECRET=**************************
 docker-compose up -d --force-recreate p2-litellm
 ```
 
-* Goto LiteLLM UI nad login with `admin / master-key-from-env`
+* Goto LiteLLM UI and login with `admin / master-key-from-env`
 * Generate new Virtual Key
 * Set this key as `apiKey` inside `librechat/librechat.yaml`
 
@@ -50,7 +50,7 @@ endpoints:
 
 * start container
 
-## Librechat
+## LibreChat
 
 ```
 docker-compose up -d --force-recreate p2-librechat
