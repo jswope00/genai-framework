@@ -1,0 +1,22 @@
+version: 1.2.1
+
+endpoints:
+  custom:
+    - name: "Lite LLM"
+      # LibreChat requires an apiKey field. If LiteLLM doesn’t enforce one,
+      # set "user_provided" or any placeholder.
+      apiKey: "sk-H3mMOKBIpOl9BHiiWL6oLQ"
+      # Use the service DNS name/port inside the Docker network AND include /v1
+      baseURL: "http://p2-litellm:4000/v1"
+
+      models:
+        # Must match the model names LiteLLM returns from /v1/models
+        default: ["gpt-4o-mini", "gpt-5", "gpt-5-mini", "gpt-5-nano"]
+        fetch: true
+
+      titleConvo: true
+      titleModel: "gpt-4o-mini"
+      summarize: false
+      summaryModel: "gpt-4o-mini"
+      forcePrompt: false
+      modelDisplayLabel: "Lite LLM"

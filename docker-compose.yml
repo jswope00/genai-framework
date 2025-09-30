@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+
+  p2-pgdb:
+    container_name: p2-pgdb
+    image: postgres:16
+    #volumes:
+    #  - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+   
+  p2-mongodb:
+    image: mongo:6.0
+    environment:
+      MONGO_INITDB_DATABASE: librechat
+
+ 
+  p2-litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: p2-litellm
+    ports:
+      - "25002:4000"
+    env_file:
+      - .env
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml
+    command: ["--port", "4000", "--config", "/app/config.yaml"]
+
+  p2-keycloak:
+    image: quay.io/keycloak/keycloak
+    container_name: p2-keycloak
+    command:
+      - start-dev
+      - --import-realm
+    env_file:
+     - .env
+    ports:
+      - "24000:8080"
+    restart: unless-stopped
+    volumes:
+      - ./keycloak/realm-librechat.json:/opt/keycloak/data/import/realm-librechat.json:ro
+
+  p2-librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    container_name: p2-librechat
+    env_file:
+      - .env
+    ports:
+      - "23000:3080"
+    volumes:
+      - type: bind
+        source: ./librechat/librechat.yaml
+        target: /app/librechat.yaml
+
