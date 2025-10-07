@@ -682,10 +682,10 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "******************",
       "redirectUris": [
-        "https://p2-lc.nintec.de/oauth/openid/callback"
+        "http://localhost:3000/oauth/openid/callback"
       ],
       "webOrigins": [
-        "https://p2-lc.nintec.de"
+        "http://localhost:3000"
       ],
       "notBefore": 0,
       "bearerOnly": false,

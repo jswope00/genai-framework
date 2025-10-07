@@ -1,22 +1,46 @@
 version: 1.2.1
 
-endpoints:
+interface:
+  modelSelect: true
+  agents: true
+  runCode: false
+  webSearch: false
+
+# Define which endpoints should appear in the dropdown
+modelSpecs:
+  enforce: false
+  # This creates a whitelist - only "custom" will show up
+  addedEndpoints: 
+    - "More Models"
+
+  # You must have at least one model spec defined
+  list:
+    - name: "Default"
+      label: "Default"
+      default: true
+      preset:
+        endpoint: "More Models"
+
+
+endpoints: 
   custom:
-    - name: "Lite LLM"
-      # LibreChat requires an apiKey field. If LiteLLM doesn’t enforce one,
-      # set "user_provided" or any placeholder.
-      apiKey: "sk-H3mMOKBIpOl9BHiiWL6oLQ"
-      # Use the service DNS name/port inside the Docker network AND include /v1
-      baseURL: "http://p2-litellm:4000/v1"
+    - name: "More Models"
+      apiKey: "${LITELLM_MASTER_KEY}"
+      baseURL: "http://litellm:4000/v1"
 
       models:
         # Must match the model names LiteLLM returns from /v1/models
-        default: ["gpt-4o-mini", "gpt-5", "gpt-5-mini", "gpt-5-nano"]
+        default: ["gpt-5-mini"]
         fetch: true
 
       titleConvo: true
-      titleModel: "gpt-4o-mini"
+      titleModel: "gpt-5-mini"
       summarize: false
-      summaryModel: "gpt-4o-mini"
+      summaryModel: "gpt-5-mini"
       forcePrompt: false
-      modelDisplayLabel: "Lite LLM"
+
+
+ocr:
+  mistralModel: "mistral-ocr-latest"
+  apiKey: "${MISTRAL_API_KEY}"
+  strategy: "mistral_ocr"
