@@ -14,6 +14,9 @@ services:
     image: mongo:6.0
     environment:
       MONGO_INITDB_DATABASE: librechat
+    volumes
+      - ./mongo_data:/data/db
+ 
 
 
   litellm:
