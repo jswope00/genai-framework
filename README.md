@@ -73,6 +73,8 @@ docker compose up -d --force-recreate keycloak
 * Goto the 'librechat' realm via `Manage Realms`
 * Goto `Clients -> librechat-client -> Credentials` and recreate the `Client Secret`
 * Insert this `Client Secret` into `.env` for `OPENID_CLIENT_SECRET`
+* Goto `Clients -> provisioner-admin -> Credentials` and recreate the `Client Secret`
+* Insert this `Client Secret` into `.env` for `PROVISIONER_KEYCLOAK_ADMIN_CLIENT_SECRET`
 
 ```
 # LIBRECHAT
@@ -104,6 +106,9 @@ endpoints:
       apiKey: "*****************"
 
 ```
+
+* Create new team
+* Set the ID of that team as `PROVISIONER_DEFAULT_TEAM_ID` inside `.env`
 
 * start container
 
