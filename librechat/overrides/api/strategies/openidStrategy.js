@@ -350,6 +350,10 @@ async function setupOpenId() {
             ...(await getUserInfo(openidConfig, tokenset.access_token, claims.sub)),
           };
 
+          logger.info(`[openidStrategy] Retrieved userinfo: ${safeStringify(userinfo)}`);
+          logger.info(`[openidStrategy] Retrieved userinfo lite llm: ${safeStringify(userinfo.litellm_api_key)}`);
+
+
           const appConfig = await getAppConfig();
           if (!isEmailDomainAllowed(userinfo.email, appConfig?.registration?.allowedDomains)) {
             logger.error(
@@ -431,7 +435,7 @@ async function setupOpenId() {
               email: userinfo.email || '',
               emailVerified: userinfo.email_verified || false,
               name: fullName,
-              idOnTheSource: userinfo.oid,
+              idOnTheSource: userinfo.litellm_api_key,
             };
 
             const balanceConfig = getBalanceConfig(appConfig);
@@ -441,7 +445,7 @@ async function setupOpenId() {
             user.openidId = userinfo.sub;
             user.username = username;
             user.name = fullName;
-            user.idOnTheSource = userinfo.oid;
+            user.idOnTheSource = userinfo.litellm_api_key;
             if (userinfo.email && userinfo.email !== user.email) {
               user.email = userinfo.email;
               user.emailVerified = userinfo.email_verified || false;
@@ -481,13 +485,14 @@ async function setupOpenId() {
           user = await updateUser(user._id, user);
 
           logger.info(
-            `[openidStrategy] login success openidId: ${user.openidId} | email: ${user.email} | username: ${user.username} `,
+            `[openidStrategy] login success openidId: ${user.openidId} | email: ${user.email} | username: ${user.username} | idOnTheSource: ${user.idOnTheSource}`,
             {
               user: {
                 openidId: user.openidId,
                 username: user.username,
                 email: user.email,
                 name: user.name,
+                idOnTheSource: user.idOnTheSource,
               },
             },
           );

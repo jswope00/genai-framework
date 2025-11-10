@@ -1,2 +1,8 @@
 FROM ghcr.io/danny-avila/librechat:latest
-COPY ./librechat/openidStrategy.js /app/api/strategies/openidStrategy.js
+COPY ./librechat/overrides/api/strategies/openidStrategy.js /app/api/strategies/openidStrategy.js
+COPY ./librechat/overrides/api/server/services/ModelService.js /app/api/server/services/ModelService.js
+COPY ./librechat/overrides/api/server/services/Endpoints/custom/initialize.js /app/api/server/services/Endpoints/custom/initialize.js
+COPY ./librechat/overrides/api/server/services/Config/loadDefaultModels.js /app/api/server/services/Config/loadDefaultModels.js
+COPY ./librechat/overrides/api/server/services/Config/loadConfigModels.js /app/api/server/services/Config/loadConfigModels.js
+COPY ./librechat/overrides/packages/data-schemas/src/methods/user.ts /app/packages/data-schemas/src/methods/user.ts
+COPY ./librechat/overrides/api/server/controllers/ModelController.js /app/api/server/controllers/ModelController.js
