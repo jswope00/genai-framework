@@ -52,7 +52,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "3000:3080"
     volumes:
       - type: bind
         source: ./librechat/librechat.yaml
@@ -60,3 +60,21 @@ services:
 
     extra_hosts:
       - "localhost:host-gateway"
+    
+  provisioner:
+    build: ./provisioner
+    environment:
+      PORT: ${PROVISIONER_PORT}
+      WEBHOOK_SHARED_SECRET: ${WEBHOOK_SHARED_SECRET}
+      LITELLM_URL: http://litellm:4000
+      LITELLM_ADMIN_KEY: ${LITELLM_MASTER_KEY}
+      KEYCLOAK_REALM: ${PROVISIONER_KEYCLOAK_REALM}
+      DEFAULT_TEAM_ALIAS: ${PROVISIONER_DEFAULT_TEAM_ALIAS}
+      DEFAULT_TEAM_ID: ${PROVISIONER_DEFAULT_TEAM_ID}
+      KEYCLOAK_BASE_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_REALM: ${PROVISIONER_KEYCLOAK_REALM}
+      KEYCLOAK_ADMIN_CLIENT_ID: ${PROVISIONER_KEYCLOAK_ADMIN_CLIENT_ID}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${PROVISIONER_KEYCLOAK_ADMIN_CLIENT_SECRET}
+    ports:  
+      - "8081:8081"
+
