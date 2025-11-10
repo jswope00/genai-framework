@@ -118,6 +118,16 @@ endpoints:
 docker compose up -d --force-recreate librechat
 ```
 
+## Provisioner (node.js)
+
+```
+docker compose build provisioner
+```
+
+```
+docker compose up -d --force-recreate provisioner
+```
+
 * Login with OpenID via KeyCloak with your previous created user :D
 
 
