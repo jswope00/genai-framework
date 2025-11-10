@@ -1,1 +1,10 @@
 .env*
+
+# LibreChat source code (separate git repo)
+librechat-source/
+
+# Database data directories
+mongo_data/
+postgres_data/
+mongo_data/*
+postgres_data/*
