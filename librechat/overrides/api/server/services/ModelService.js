@@ -68,18 +68,12 @@ const fetchModels = async ({
     return models;
   }
 
-  apiKey = userObject.idOnTheSource;
-  logger.info(`[ModelService] Using API key from Keycloak token for endpoint: ${name}`);
-  logger.info(`[ModelService] Fetching models from baseURL: ${baseURL}`);
-  logger.info(`[ModelService] idOnTheSource: ${userObject.idOnTheSource}`);
-  logger.info(`[ModelService] userObject keys: ${Object.keys(userObject)}`);
-  // log all value of userObject not null fields:
-  Object.entries(userObject).forEach(([key, value]) => {
-    if (value) {
-      logger.info(`[ModelService] userObject.${key}: ${value}`);
-    }
-  });
-  
+  if (userObject && userObject.idOnTheSource && !userObject.idOnTheSource.startsWith('sk-')) {
+    apiKey = userObject.idOnTheSource;
+    logger.info(`[ModelService] Using API key from Keycloak token for endpoint: ${name}`);
+    logger.info(`[ModelService] Fetching models from baseURL: ${baseURL}`);
+    logger.info(`[ModelService] idOnTheSource: ${userObject.idOnTheSource}`);
+  }
 
   if (name && name.toLowerCase().startsWith(Providers.OLLAMA)) {
     try {
