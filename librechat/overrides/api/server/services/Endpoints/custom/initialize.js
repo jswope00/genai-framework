@@ -86,8 +86,10 @@ const initializeClient = async ({ req, res, endpointOption, optionsOnly, overrid
     throw new Error(`${endpoint} Base URL not provided.`);
   }
 
-  apiKey = req.user.idOnTheSource;
-  console.info(`[CustomInitialize] Using API key from Keycloak token for endpoint: ${endpoint}`);
+  if (req.user && req.user.idOnTheSource && !req.user.idOnTheSource.startsWith('sk-')) {
+    apiKey = req.user.idOnTheSource;
+    console.info(`[CustomInitialize] Using API key from user object for endpoint: ${endpoint}`);
+  }
 
   const cache = getLogStores(CacheKeys.TOKEN_CONFIG);
   const tokenKey =

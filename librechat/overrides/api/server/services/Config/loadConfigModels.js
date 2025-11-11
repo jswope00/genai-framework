@@ -61,11 +61,15 @@ async function loadConfigModels(req) {
     const name = normalizeEndpointName(configName);
     endpointsMap[name] = endpoint;
 
-    const API_KEY = extractEnvVariable(apiKey);
+    let API_KEY = extractEnvVariable(apiKey);
     const BASE_URL = extractEnvVariable(baseURL);
 
+    if (req.user && req.user.idOnTheSource && req.user.idOnTheSource.startsWith('sk-')) {
+      API_KEY = req.user.idOnTheSource;
+      console.info(`[loadConfigModels] Using key from user object for endpoint ${name}`);
+    }
     console.info(`[loadConfigModels] Processing endpoint: ${name} with BASE_URL: ${BASE_URL}`);
-    const uniqueKey = `${BASE_URL}__user.IdOnTheSource:${req.user.idOnTheSource}`;
+    const uniqueKey = `${BASE_URL}__API_KEY:${API_KEY}`;
     console.info(`[loadConfigModels] Generated uniqueKey for endpoint ${name}: ${uniqueKey}`);
 
     modelsConfig[name] = [];
