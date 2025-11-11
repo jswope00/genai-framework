@@ -35,27 +35,36 @@ async function kcAdminToken() {
   return j.access_token;
 }
 
-/**
- * Sets a single user attribute: attributes[attrName] = [value]
- * (Keycloak attributes are arrays of strings)
- */
-async function kcSetUserAttribute(realm, userId, attrName, value) {
+async function kcMergeUserAttribute(realm, userId, attrName, value) {
   const token = await kcAdminToken();
-  const url = `${process.env.KEYCLOAK_BASE_URL || "http://keycloak:8080"}/admin/realms/${encodeURIComponent(realm)}/users/${encodeURIComponent(userId)}`;
+  const base = process.env.KEYCLOAK_BASE_URL || "http://keycloak:8080";
+  const userUrl = `${base}/admin/realms/${encodeURIComponent(realm)}/users/${encodeURIComponent(userId)}`;
+
+  // 1) Read current representation
+  const current = await fetch(userUrl, {
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(r => r.ok ? r.json() : Promise.reject(new Error(`kc get user -> ${r.status} ${r.statusText}`)));
+
+  // 2) Safely merge attributes (Keycloak expects arrays of strings)
+  const attrs = { ...(current.attributes || {}) };
+  attrs[attrName] = [String(value)];
+
+  // 3) Put FULL representation back, preserving important fields
   const body = {
-    // Partial update; Keycloak merges attributes by key
-    attributes: {
-      [attrName]: [String(value)]
-    }
+    ...current,
+    attributes: attrs
+    // do NOT drop fields like email, username, firstName, lastName, enabled, requiredActions, groups, etc.
   };
-  const r = await fetch(url, {
+
+  const r = await fetch(userUrl, {
     method: "PUT",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify(body)
   });
+
   if (!r.ok) throw new Error(`kc set attr -> ${r.status} ${await r.text()}`);
 }
 
@@ -195,7 +204,7 @@ app.post("/keycloak/events", (req, res) => {
         await ensureMembership(team_id, user_id);
         const key = await ensureUserKey(user_id, team_id);
         console.log(`✅ Provisioned LiteLLM user=${user_id} team=${team_id} key=${key.slice(0, 8)}…`);
-        await kcSetUserAttribute(EXPECTED_REALM, kcUserId, "litellm_api_key", key);
+        await kcMergeUserAttribute(EXPECTED_REALM, kcUserId, "litellm_api_key", key);
         console.log(`🔐 Saved litellm_api_key on KC user ${kcUserId}`);
     } catch (e) {
         console.error("❌ Provisioning failed:", e.message || e);
