@@ -44,7 +44,7 @@ services:
       - "4000:8080"
     restart: unless-stopped
     volumes:
-      - ./keycloak/realm-librechat.json:/opt/keycloak/data/import/realm-librechat.json:ro
+      - ./keycloak/realm-librechat-local.json:/opt/keycloak/data/import/realm-librechat.json:ro
       - ./keycloak/providers:/opt/keycloak/providers
       - ./keycloak/themes:/opt/keycloak/themes
 
@@ -62,7 +62,7 @@ services:
       - "4000:8080"
     restart: always
     volumes:
-      - ./keycloak/realm-librechat.json:/opt/keycloak/data/import/realm-librechat.json:ro
+      - ./keycloak/realm-librechat-dev.json:/opt/keycloak/data/import/realm-librechat.json:ro
       - ./keycloak/providers:/opt/keycloak/providers
       - ./keycloak/themes:/opt/keycloak/themes
 
