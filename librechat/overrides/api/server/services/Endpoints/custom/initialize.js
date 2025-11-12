@@ -86,7 +86,7 @@ const initializeClient = async ({ req, res, endpointOption, optionsOnly, overrid
     throw new Error(`${endpoint} Base URL not provided.`);
   }
 
-  if (req.user && req.user.idOnTheSource && !req.user.idOnTheSource.startsWith('sk-')) {
+  if (req.user && req.user.idOnTheSource && req.user.idOnTheSource.startsWith('sk-')) {
     apiKey = req.user.idOnTheSource;
     console.info(`[CustomInitialize] Using API key from user object for endpoint: ${endpoint}`);
   }
