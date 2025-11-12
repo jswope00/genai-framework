@@ -33,3 +33,12 @@ model_list:
     litellm_params:
       model: anthropic/claude-3-5-haiku-20241022
       api_key: os.environ/ANTHROPIC_API_KEY
+
+guardrails:
+  - guardrail_name: "openai-moderation-pre"
+    litellm_params:
+      guardrail: openai_moderation
+      mode: "pre_call"
+      api_key: os.environ/OPENAI_API_KEY  # Optional if already set globally
+      model: "omni-moderation-latest"     # Optional, defaults to omni-moderation-latest
+      api_base: "https://api.openai.com/v1"  # Optional, defaults to OpenAI API
