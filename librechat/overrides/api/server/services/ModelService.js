@@ -68,7 +68,7 @@ const fetchModels = async ({
     return models;
   }
 
-  if (userObject && userObject.idOnTheSource && !userObject.idOnTheSource.startsWith('sk-')) {
+  if (userObject && userObject.idOnTheSource && userObject.idOnTheSource.startsWith('sk-')) {
     apiKey = userObject.idOnTheSource;
     logger.info(`[ModelService] Using API key from Keycloak token for endpoint: ${name}`);
     logger.info(`[ModelService] Fetching models from baseURL: ${baseURL}`);
