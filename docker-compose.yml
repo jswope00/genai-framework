@@ -67,6 +67,26 @@ services:
       - ./keycloak/themes:/opt/keycloak/themes
 
   librechat:
+    profiles: ["local"]
+    #image: ghcr.io/danny-avila/librechat:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.librechat
+    container_name: librechat
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./librechat/librechat.yaml
+        target: /app/librechat.yaml
+
+    extra_hosts:
+      - "localhost:host-gateway"
+
+  librechat-prod:
+    profiles: ["prod"]
     #image: ghcr.io/danny-avila/librechat:latest
     build:
       context: .
