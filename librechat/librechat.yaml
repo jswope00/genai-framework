@@ -5,6 +5,7 @@ interface:
   agents: true
   runCode: false
   webSearch: false
+  customWelcome: "Welcome to the Chat! This is a public sandbox. Do not share private information."
 
 # Define which endpoints should appear in the dropdown
 modelSpecs:
@@ -30,13 +31,13 @@ endpoints:
 
       models:
         # Must match the model names LiteLLM returns from /v1/models
-        default: ["gpt-5-mini"]
+        default: ["anthropic/claude-3-5-haiku-20241022"]
         fetch: true
 
       titleConvo: true
-      titleModel: "gpt-5-mini"
+      titleModel: "anthropic/claude-3-5-haiku-20241022"
       summarize: false
-      summaryModel: "gpt-5-mini"
+      summaryModel: "anthropic/claude-3-5-haiku-20241022"
       forcePrompt: false
 
 

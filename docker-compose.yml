@@ -29,10 +29,14 @@ services:
     command: ["--port", "4000", "--config", "/app/config.yaml"]
 
   keycloak:
+    profiles: ["local"]
     image: quay.io/keycloak/keycloak
     container_name: keycloak
     command:
       - start-dev
+      - --spi-theme-static-max-age=-1
+      - --spi-theme-cache-themes=false
+      - --spi-theme-cache-templates=false
       - --import-realm
     env_file:
      - .env
@@ -40,10 +44,49 @@ services:
       - "4000:8080"
     restart: unless-stopped
     volumes:
-      - ./keycloak/realm-librechat.json:/opt/keycloak/data/import/realm-librechat.json:ro
+      - ./keycloak/realm-librechat-local.json:/opt/keycloak/data/import/realm-librechat.json:ro
       - ./keycloak/providers:/opt/keycloak/providers
+      - ./keycloak/themes:/opt/keycloak/themes
+
+  keycloak-prod:
+    profiles: ["prod"]
+    image: quay.io/keycloak/keycloak
+    container_name: keycloak
+    command:
+      - start
+      - --optimized
+      - --import-realm
+    env_file:
+     - .env
+    ports:
+      - "4000:8080"
+    restart: always
+    volumes:
+      - ./keycloak/realm-librechat-dev.json:/opt/keycloak/data/import/realm-librechat.json:ro
+      - ./keycloak/providers:/opt/keycloak/providers
+      - ./keycloak/themes:/opt/keycloak/themes
 
   librechat:
+    profiles: ["local"]
+    #image: ghcr.io/danny-avila/librechat:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.librechat
+    container_name: librechat
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./librechat/librechat.yaml
+        target: /app/librechat.yaml
+
+    extra_hosts:
+      - "localhost:host-gateway"
+
+  librechat-prod:
+    profiles: ["prod"]
     #image: ghcr.io/danny-avila/librechat:latest
     build:
       context: .
