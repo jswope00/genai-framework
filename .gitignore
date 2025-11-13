@@ -8,3 +8,7 @@ mongo_data/
 postgres_data/
 mongo_data/*
 postgres_data/*
+
+# IDE and editor specific files
+.vscode/
+.idea/
