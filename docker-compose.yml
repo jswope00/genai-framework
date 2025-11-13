@@ -45,8 +45,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./keycloak/realm-librechat-local.json:/opt/keycloak/data/import/realm-librechat.json:ro
-      - ./keycloak/providers:/opt/keycloak/providers
+      #- ./keycloak/providers:/opt/keycloak/providers
       - ./keycloak/themes:/opt/keycloak/themes
+      - ./keycloak-litellm-provisioner/target/keycloak-litellm-provisioner-0.1.0.jar:/opt/keycloak/providers/keycloak-litellm-provisioner.jar:ro
 
   keycloak-prod:
     profiles: ["prod"]

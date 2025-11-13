@@ -318,11 +318,6 @@ async function setupOpenId() {
         execute: [client.allowInsecureRequests],
       },
     );
-    
-
-logger.info(`[openidStrategy] OpenID issuer: ${process.env.OPENID_ISSUER}`);
-    logger.info(`[openidStrategy] OpenID client ID: ${process.env.OPENID_CLIENT_ID}`);
-    logger.info(`[openidStrategy] OpenID client config: ${safeStringify(openidConfig)}`);
 
     const requiredRole = process.env.OPENID_REQUIRED_ROLE;
     const requiredRoleParameterPath = process.env.OPENID_REQUIRED_ROLE_PARAMETER_PATH;
@@ -349,41 +344,7 @@ logger.info(`[openidStrategy] OpenID issuer: ${process.env.OPENID_ISSUER}`);
        */
       async (tokenset, done) => {
         try {
-          let currentTokenset = tokenset;
-    let claims = currentTokenset.claims();
-    const maxRetries = 3; // Retry up to 3 times
-    const retryInterval = 2000; // 2 seconds
-
-    // Check if the key is missing and if we have a refresh token to try again
-    if (!claims.litellm_api_key && currentTokenset.refresh_token) {
-      for (let i = 0; i < maxRetries; i++) {
-        logger.warn(`[openidStrategy] litellm_api_key not found. Retry ${i + 1}/${maxRetries}...`);
-        
-        // Wait for the interval
-        await new Promise(resolve => setTimeout(resolve, retryInterval));
-
-        try {
-          // Use the refresh token to get a new set of tokens
-          currentTokenset = await client.refreshTokenGrant(openidConfig, currentTokenset.refresh_token);
-          claims = currentTokenset.claims();
-
-          // If the key is now present, break the loop and continue with login
-          if (claims.litellm_api_key) {
-            logger.info('[openidStrategy] litellm_api_key found after retry.');
-            break;
-          }
-        } catch (refreshError) {
-          logger.error('[openidStrategy] Failed to refresh token during retry.', refreshError);
-          // If refresh fails, we can't continue retrying, so break the loop
-          break;
-        }
-      }
-    }
-
-    if (!claims.litellm_api_key) {
-        logger.warn('[openidStrategy] Proceeding with login, but litellm_api_key was not found after all retries.');
-    }
-
+          const claims = tokenset.claims();
           const userinfo = {
             ...claims,
             ...(await getUserInfo(openidConfig, tokenset.access_token, claims.sub)),
@@ -397,7 +358,7 @@ logger.info(`[openidStrategy] OpenID issuer: ${process.env.OPENID_ISSUER}`);
           if (!isEmailDomainAllowed(userinfo.email, appConfig?.registration?.allowedDomains)) {
             logger.error(
               `[OpenID Strategy] Authentication blocked - email domain not allowed [Email: ${userinfo.email}]`,
-            ); 
+            );
             return done(null, false, { message: 'Email domain not allowed' });
           }
 
@@ -405,7 +366,7 @@ logger.info(`[openidStrategy] OpenID issuer: ${process.env.OPENID_ISSUER}`);
             findUser,
             email: claims.email,
             openidId: claims.sub,
-            idOnTheSource: claims.litellm_api_key || claims.oid,
+            idOnTheSource: claims.oid,
             strategyName: 'openidStrategy',
           });
           let user = result.user;
@@ -567,4 +528,3 @@ module.exports = {
   setupOpenId,
   getOpenIdConfig,
 };
-
